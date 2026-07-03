@@ -11,6 +11,11 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use \Spatie\Permission\Traits\HasRoles;
+    use \Uspdev\SenhaunicaSocialite\Traits\HasSenhaunica;
+
+    protected $guard_name = 'senhaunica';
+    protected $dates = ['email_verified_at'];
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +26,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'cpf',
+        'codpes',
+        'driver',
     ];
 
     /**
