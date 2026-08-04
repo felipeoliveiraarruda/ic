@@ -95,26 +95,34 @@ return [
                 'items' => 
                 [
                     [
-                        'label' => 'Entrar com Senha Única',
+                        'label' => 'Entrar com Senha Única USP',
                         'route' => 'login',
                         'icon' => 'fa-sign-in-alt',
                         'active' => '',
                         'guest' => true,
                     ],
                     [
+                        'label' => 'Entrar com Gmail',
+                        'route' => 'auth/google/redirect',
+                        'icon' => 'fa-brands fa-google',
+                        'active' => '',
+                        'guest' => true,
+                    ],   
+                    [
                         'label' => 'Entrar com Conta Local',
                         'route' => 'local',
                         'icon' => 'fa-user',
                         'active' => '',
                         'guest' => true,
-                    ],
-                    [
-                        'label' => 'Entrar com Gmail',
-                        'route' => 'login',
-                        'icon' => 'fa-brands fa-google',
-                        'active' => '',
-                        'guest' => true,
-                    ],                     
+                    ],                  
+                ],                               
+            ],
+            'admin' => 
+            [
+                'label' => 'Administração',
+                'items' => 
+                [
+                  
                 ],                               
             ],
         ],

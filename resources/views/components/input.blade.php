@@ -81,6 +81,7 @@
                     @if(! is_null($inputValue)) value="{{ $inputValue }}" @endif
                     @if($placeholder) placeholder="{{ $placeholder }}" @endif
                     @if($required) required @endif
+                    @if($mask) x-mask="{{ $mask }}" @endif
                     @if($hasError) aria-invalid="true" @endif
                     {{ $inputAttributes }}
                 >

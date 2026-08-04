@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Permission;
 
 class RegisteredUserController extends Controller
 {
@@ -40,9 +41,16 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'codpes'   => User::gerarCodigoPessoaExterna(),
         ]);
 
         event(new Registered($user));
+
+        /* Monta as permissões do usuário */
+        $permissions[] = Permission::where('guard_name', 'senhaunica')->where('name', 'user')->first();
+        $permissions[] = Permission::where('guard_name', 'senhaunica')->where('name', 'Outros')->first();
+           
+        $user->syncPermissions($permissions);
 
         Auth::login($user);
 

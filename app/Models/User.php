@@ -53,4 +53,40 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public static function gerarCodigoPessoaExterna()
+    {
+        $tamanho = 5;
+        $prefixo = "88";
+
+        $temp = User::count() + 1;
+
+        $codigo = str_pad($temp, $tamanho, '0', STR_PAD_LEFT);
+
+        return $prefixo.$codigo;
+    }
+
+    public function setCodpesAttribute($value) 
+    {
+        $this->attributes['codpes'] = preg_replace('/[^0-9]/', '', $value);
+    }
+
+        public static function obterLevel($id)
+    {
+        $user = User::with('permissions', 'roles')->find($id);
+        return $user->level;
+    }
+
+    public static function obterVinculos($id)
+    {
+        $user = User::with('permissions', 'roles')->find($id);   
+        $vinculos = array();
+        
+        foreach ($user->permissions->where('guard_name', User::$vinculoNs)->whereIn('name', User::$permissoesVinculo) as $p)
+        {
+            array_push($vinculos, $p->name);
+        }
+
+        return $vinculos;
+    }
 }

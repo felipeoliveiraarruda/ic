@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e49163ffac5effdd638edb817657e4d2",
+    "content-hash": "4fd4163f4c09f314b8d365ceba238f63",
     "packages": [
         {
             "name": "brick/math",
@@ -863,16 +863,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.13.1",
+            "version": "7.13.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "55901a76dfd2006a0cc012b9e3c5b487f796478d"
+                "reference": "bcd989ad36c92d42a3715379af91f2defee5b8dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/55901a76dfd2006a0cc012b9e3c5b487f796478d",
-                "reference": "55901a76dfd2006a0cc012b9e3c5b487f796478d",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/bcd989ad36c92d42a3715379af91f2defee5b8dd",
+                "reference": "bcd989ad36c92d42a3715379af91f2defee5b8dd",
                 "shasum": ""
             },
             "require": {
@@ -890,7 +890,7 @@
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8.2",
                 "ext-curl": "*",
-                "guzzle/client-integration-tests": "3.0.2",
+                "guzzle/client-integration-tests": "3.0.3",
                 "guzzlehttp/test-server": "^0.6",
                 "php-http/message-factory": "^1.1",
                 "phpunit/phpunit": "^8.5.52 || ^9.6.34",
@@ -971,7 +971,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.13.1"
+                "source": "https://github.com/guzzle/guzzle/tree/7.13.2"
             },
             "funding": [
                 {
@@ -987,7 +987,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-29T20:14:18+00:00"
+            "time": "2026-07-05T19:00:11+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1345,12 +1345,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "47b9536c2008426ee341f68e8c66734f59e0b9f2"
+                "reference": "eb81de3b8e5e37a529f50cbd57eae6d55ebbbfac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/47b9536c2008426ee341f68e8c66734f59e0b9f2",
-                "reference": "47b9536c2008426ee341f68e8c66734f59e0b9f2",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/eb81de3b8e5e37a529f50cbd57eae6d55ebbbfac",
+                "reference": "eb81de3b8e5e37a529f50cbd57eae6d55ebbbfac",
                 "shasum": ""
             },
             "require": {
@@ -1552,7 +1552,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-05-29T23:32:27+00:00"
+            "time": "2026-07-03T20:27:52+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -1813,6 +1813,57 @@
             "time": "2026-02-06T14:12:35+00:00"
         },
         {
+            "name": "laravellegends/pt-br-validator",
+            "version": "13.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LaravelLegends/pt-br-validator.git",
+                "reference": "5247b895eeb6d86194226b3286c6b9cbad0719d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LaravelLegends/pt-br-validator/zipball/5247b895eeb6d86194226b3286c6b9cbad0719d7",
+                "reference": "5247b895eeb6d86194226b3286c6b9cbad0719d7",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0 || ^10.0 || ^11.0",
+                "phpunit/phpunit": "^8.3 || ^9.0 || ^11.5.3 || ^12.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaravelLegends\\PtBrValidator\\ValidatorProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LaravelLegends\\PtBrValidator\\": "src/pt-br-validator"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Wallace de Souza Vizerra",
+                    "email": "wallacemaxters@gmail.com"
+                }
+            ],
+            "description": "Uma biblioteca contendo validações de formatos Brasileiros, para o Laravel",
+            "support": {
+                "issues": "https://github.com/LaravelLegends/pt-br-validator/issues",
+                "source": "https://github.com/LaravelLegends/pt-br-validator/tree/13.0.0"
+            },
+            "time": "2026-05-12T00:00:21+00:00"
+        },
+        {
             "name": "league/commonmark",
             "version": "2.8.2",
             "source": {
@@ -2003,16 +2054,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.35.1",
+            "version": "3.35.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "f23af6c5aafd958a7593029a271d77baf5ed793c"
+                "reference": "b277b5dc3d56650b68904117124e79c851e12376"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f23af6c5aafd958a7593029a271d77baf5ed793c",
-                "reference": "f23af6c5aafd958a7593029a271d77baf5ed793c",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/b277b5dc3d56650b68904117124e79c851e12376",
+                "reference": "b277b5dc3d56650b68904117124e79c851e12376",
                 "shasum": ""
             },
             "require": {
@@ -2080,9 +2131,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.35.1"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.35.2"
             },
-            "time": "2026-06-25T06:52:23+00:00"
+            "time": "2026-07-06T14:42:07+00:00"
         },
         {
             "name": "league/flysystem-local",
@@ -2815,20 +2866,19 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.7.0",
+            "version": "v5.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "dca41cd15c2ac9d055ad70dbfd011130757d1f82"
+                "reference": "044a6a392ff8ad0d61f14370a5fbbd0a0107152f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/dca41cd15c2ac9d055ad70dbfd011130757d1f82",
-                "reference": "dca41cd15c2ac9d055ad70dbfd011130757d1f82",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/044a6a392ff8ad0d61f14370a5fbbd0a0107152f",
+                "reference": "044a6a392ff8ad0d61f14370a5fbbd0a0107152f",
                 "shasum": ""
             },
             "require": {
-                "ext-ctype": "*",
                 "ext-json": "*",
                 "ext-tokenizer": "*",
                 "php": ">=7.4"
@@ -2867,9 +2917,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.7.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.8.0"
             },
-            "time": "2025-12-06T11:56:16+00:00"
+            "time": "2026-07-04T14:30:18+00:00"
         },
         {
             "name": "nunomaduro/termwind",
@@ -7287,16 +7337,16 @@
         },
         {
             "name": "uspdev/replicado",
-            "version": "1.27.12",
+            "version": "1.27.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/uspdev/replicado.git",
-                "reference": "2feec97a58b92b108e74eba83f61d29fee69a472"
+                "reference": "9e039816a1295aed019fad98e0dc5d854fcb2b61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/uspdev/replicado/zipball/2feec97a58b92b108e74eba83f61d29fee69a472",
-                "reference": "2feec97a58b92b108e74eba83f61d29fee69a472",
+                "url": "https://api.github.com/repos/uspdev/replicado/zipball/9e039816a1295aed019fad98e0dc5d854fcb2b61",
+                "reference": "9e039816a1295aed019fad98e0dc5d854fcb2b61",
                 "shasum": ""
             },
             "require": {
@@ -7330,9 +7380,9 @@
             "homepage": "https://github.com/uspdev/replicado",
             "support": {
                 "issues": "https://github.com/uspdev/replicado/issues",
-                "source": "https://github.com/uspdev/replicado/tree/1.27.12"
+                "source": "https://github.com/uspdev/replicado/tree/1.27.13"
             },
-            "time": "2026-05-13T14:04:10+00:00"
+            "time": "2026-07-03T17:55:32+00:00"
         },
         {
             "name": "uspdev/senhaunica-socialite",
@@ -7393,16 +7443,16 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v5.6.3",
+            "version": "v5.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "955e7815d677a3eaa7075231212f2110983adecc"
+                "reference": "416df702837983f8d5ff48c9c3fee4f5f57b980b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/955e7815d677a3eaa7075231212f2110983adecc",
-                "reference": "955e7815d677a3eaa7075231212f2110983adecc",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/416df702837983f8d5ff48c9c3fee4f5f57b980b",
+                "reference": "416df702837983f8d5ff48c9c3fee4f5f57b980b",
                 "shasum": ""
             },
             "require": {
@@ -7461,7 +7511,7 @@
             ],
             "support": {
                 "issues": "https://github.com/vlucas/phpdotenv/issues",
-                "source": "https://github.com/vlucas/phpdotenv/tree/v5.6.3"
+                "source": "https://github.com/vlucas/phpdotenv/tree/v5.6.4"
             },
             "funding": [
                 {
@@ -7473,7 +7523,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-12-27T19:49:13+00:00"
+            "time": "2026-07-06T19:11:50+00:00"
         },
         {
             "name": "voku/portable-ascii",
@@ -8007,6 +8057,65 @@
                 "source": "https://github.com/laravel/sail"
             },
             "time": "2026-06-18T08:54:14+00:00"
+        },
+        {
+            "name": "lucascudo/laravel-pt-br-localization",
+            "version": "v3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lucascudo/laravel-pt-BR-localization.git",
+                "reference": "5133b5c315a49cb0bbb2fc14cedf0031f003521e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lucascudo/laravel-pt-BR-localization/zipball/5133b5c315a49cb0bbb2fc14cedf0031f003521e",
+                "reference": "5133b5c315a49cb0bbb2fc14cedf0031f003521e",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Lucascudo\\LaravelPtBrLocalization\\LaravelPtBrLocalizationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Lucascudo\\LaravelPtBrLocalization\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Cascudo",
+                    "email": "lucas.sisau@gmail.com"
+                }
+            ],
+            "description": "Arquivos de linguagem em Português do Brasil (pt-BR) para Laravel",
+            "homepage": "https://github.com/lucascudo/laravel-pt-br-localization",
+            "support": {
+                "issues": "https://github.com/lucascudo/laravel-pt-BR-localization/issues",
+                "source": "https://github.com/lucascudo/laravel-pt-BR-localization/tree/v3.0.4"
+            },
+            "funding": [
+                {
+                    "url": "https://buymeacoffee.com/lucasrocha",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/lucascudo",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/lucascudo/laravel-pt-br-localization",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-03-06T11:03:14+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -8714,24 +8823,24 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.55",
+            "version": "11.5.56",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "adc7262fccc12de2b30f12a8aa0b33775d814f00"
+                "reference": "5f83edffa6967c3db468d48a695ec7bcb02e9256"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/adc7262fccc12de2b30f12a8aa0b33775d814f00",
-                "reference": "adc7262fccc12de2b30f12a8aa0b33775d814f00",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5f83edffa6967c3db468d48a695ec7bcb02e9256",
+                "reference": "5f83edffa6967c3db468d48a695ec7bcb02e9256",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
+                "ext-filter": "*",
                 "ext-json": "*",
                 "ext-libxml": "*",
                 "ext-mbstring": "*",
-                "ext-xml": "*",
                 "ext-xmlwriter": "*",
                 "myclabs/deep-copy": "^1.13.4",
                 "phar-io/manifest": "^2.0.4",
@@ -8796,31 +8905,15 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.55"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.56"
             },
             "funding": [
                 {
-                    "url": "https://phpunit.de/sponsors.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                },
-                {
-                    "url": "https://liberapay.com/sebastianbergmann",
-                    "type": "liberapay"
-                },
-                {
-                    "url": "https://thanks.dev/u/gh/sebastianbergmann",
-                    "type": "thanks_dev"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpunit/phpunit",
-                    "type": "tidelift"
+                    "url": "https://phpunit.de/sponsoring.html",
+                    "type": "other"
                 }
             ],
-            "time": "2026-02-18T12:37:06+00:00"
+            "time": "2026-07-06T14:52:39+00:00"
         },
         {
             "name": "sebastian/cli-parser",
