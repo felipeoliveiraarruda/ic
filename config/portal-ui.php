@@ -95,10 +95,10 @@ return [
                 'items' => 
                 [
                     [
-                        'label' => 'Entrar com Senha Única USP',
-                        'route' => 'login',
-                        'icon' => 'fa-sign-in-alt',
-                        'active' => '',
+                        'label' => 'Entrar',
+                        'route' => 'local',
+                        'icon' => 'fa-user',
+                        'active' => 'local',
                         'guest' => true,
                     ],
                     [
@@ -107,14 +107,14 @@ return [
                         'icon' => 'fa-brands fa-google',
                         'active' => '',
                         'guest' => true,
-                    ],   
+                    ],
                     [
-                        'label' => 'Entrar com Conta Local',
-                        'route' => 'local',
-                        'icon' => 'fa-user',
+                        'label' => 'Entrar com Senha Única USP',
+                        'route' => 'login',
+                        'icon' => 'fa-sign-in-alt',
                         'active' => '',
                         'guest' => true,
-                    ],                  
+                    ],
                 ],                               
             ],
             'admin' => 
@@ -122,7 +122,20 @@ return [
                 'label' => 'Administração',
                 'items' => 
                 [
-                  
+                    [
+                        'label' => 'Dashboard',
+                        'route' => 'admin.dashboard',
+                        'icon' => 'fa-tachometer-alt',
+                        'active' => 'admin.dashboard',
+                        'can' => 'admin',
+                    ],
+                    [
+                        'label' => 'Projetos',
+                        'route' => 'admin.projetos',
+                        'icon' => 'fa-solid fa-diagram-project',
+                        'active' => 'admin.projetos',
+                        'can' => 'user',
+                    ],
                 ],                               
             ],
         ],
@@ -130,7 +143,7 @@ return [
     ],
 
     'routes' => [
-        'login' => 'login',
+        'login' => 'local',
         'logout' => 'logout',
         'home' => 'home',
     ],

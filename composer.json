@@ -10,6 +10,7 @@
         "laravel/framework": "^11.55",
         "laravel/tinker": "^2.9",
         "laravellegends/pt-br-validator": "^13.0",
+        "livewire/livewire": "^4.3",
         "sistemas-eel/portal-ui": "^0.1.0",
         "uspdev/laravel-replicado": "^1.1",
         "uspdev/laravel-tools": "^1.6",

@@ -71,7 +71,7 @@ class User extends Authenticatable
         $this->attributes['codpes'] = preg_replace('/[^0-9]/', '', $value);
     }
 
-        public static function obterLevel($id)
+    public static function obterLevel($id)
     {
         $user = User::with('permissions', 'roles')->find($id);
         return $user->level;

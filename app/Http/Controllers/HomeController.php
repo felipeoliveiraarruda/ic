@@ -6,34 +6,53 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Arr;
 use App\Models\User;
 use App\Models\Utils;
+use App\Models\Projetos;
 
 class HomeController extends Controller
 {
     public function index()
     {
         if (Auth::guest())
-        {
-            return view('index');
+        {            
+            return view('index', [
+                'projetos' => Projetos::all()
+            ]);
         }
         else
         {            
-            Utils::setSession(Auth::user()->id);            
+            Utils::setSession(Auth::user()->id);
             
-            if (session('level') == 'admin')
+            if (session('level') == 'admin' || Arr::exists(session('vinculos'), 'Docente'))
             {
-                return redirect('admin');
+                return redirect(route('admin.dashboard'));
             }
-            else if (Arr::exists(session('vinculos'), 'Docente'))
+            else if (session('level') == 'user')
             {
-                return redirect('admin');
+                if (session()->has('url.intended'))
+                {
+                    return redirect()->intended();
+                }
+                else
+                {
+                    return redirect(route('admin.projetos'));
+                }
             }
             else
             {
                 return redirect('dashboard');
             }
         }
+    }
+
+    public function show($codigoProjeto)
+    {
+        return view('visualizar',
+        [
+            'projeto' => Projetos::find($codigoProjeto),
+        ]);
     }
 }

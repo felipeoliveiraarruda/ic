@@ -26,7 +26,7 @@
                 class="flex items-center justify-center overflow-hidden transition-all duration-300 w-full max-w-[190px] min-h-11"
                 data-portal-brand-mark
             >
-                @if(! empty($logo))
+                @if(!empty($logo))
                     <img
                         src="{{ asset($logo) }}"
                         alt="{{ $logoAlt }}"

@@ -18,9 +18,36 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Elementos decorativos no fundo (depois do conteúdo) -->
-    <div class="portal-circle-decoration -top-1/2 -right-1/4 w-72 h-72"></div>
-    <div class="portal-circle-decoration -bottom-1/2 -left-1/4 w-48 h-48"></div>
+<div class="space-y-6">
+    <x-portal::card padding="false">
+        <x-portal::table>
+            <x-slot:head>
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Projeto</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Curso</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Período</th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Ações</th>
+                </tr>
+            </x-slot:head>
+
+            <x-slot:body>
+                @foreach($projetos as $projeto)
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40">
+                        <td class="px-4 py-3 text-sm text-gray-800 dark:text-gray-200">{{ $projeto->tituloProjeto }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->codigoCurso }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->periodoProjeto }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <x-portal::resource-actions
+                                :viewHref="route('show', ['codigoProjeto' => $projeto->codigoProjeto])"
+                                mode="label"
+                            />
+                        </td>
+                    </tr>
+                @endforeach
+            </x-slot:body>
+        </x-portal::table>
+    </x-portal::card>
 </div>
 @endsection

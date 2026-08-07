@@ -58,5 +58,6 @@
     @stack('scripts')
     @stack('portal-ui-after-scripts')
     @yield('modals')
+    @livewireScripts
 </body>
 </html>
