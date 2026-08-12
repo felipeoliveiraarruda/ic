@@ -2,7 +2,7 @@
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Projetos;
+use App\Models\Projeto;
 
 new class extends Component
 {
@@ -10,7 +10,7 @@ new class extends Component
     {
         return view('pages.projetos.index',
         [
-            'projetos'  => (session('level') == 'admin' ?  Projetos::paginate(5) : Projetos::all()),
+            'projetos'  => (session('level') == 'admin' ? Projeto::paginate(5) : Projeto::all()),
             'level'     => session('level'),
         ]);
     }
@@ -20,7 +20,7 @@ new class extends Component
 @section('breadcrumbs')
     <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="hover:text-gray-700 hover:underline">Dashboard</a>
     <span>/</span>
-    <span>Projetos</span>
+    <span>Projeto</span>
 @endsection
 
 <div class="space-y-6">
@@ -42,25 +42,37 @@ new class extends Component
                 <tr>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Projeto</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Curso</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Linha de Pesquisa</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Docente</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Período</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Aceita Aluno Externo?</th>
                     <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Ações</th>
                 </tr>
             </x-slot:head>
 
             <x-slot:body>
                 @foreach($projetos as $projeto)
+                    @php
+                        $docente = Uspdev\Replicado\Pessoa::obterNome($projeto->codigoPessoa);
+                    @endphp 
+
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40">
                         <td class="px-4 py-3 text-sm text-gray-800 dark:text-gray-200">{{ $projeto->tituloProjeto }}</td>
                         <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->codigoCurso }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->linhaPesquisaProjeto }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $docente }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->periodoProjeto }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->statusExternoProjeto == 'S' ? 'Sim' : 'Não' }}</td>
                         <td class="px-4 py-3 text-right">                            
                             @if($level == 'admin')
                             <x-portal::resource-actions
-                                :viewHref="route('admin.projetos.show', ['codigoProjeto' => $projeto->codigoProjeto])"
+                                :viewHref="route('admin.projetos.show', ['id' => $projeto->id])"
                                 :edit-href="'#'"
                                 :delete-onclick="'window.alert(&quot;Excluir item de demonstração&quot;)'"
                             />
                             @else
                             <x-portal::resource-actions
-                                :viewHref="route('admin.projetos.show', ['codigoProjeto' => $projeto->codigoProjeto])"
+                                :viewHref="route('admin.projetos.show', ['id' => $projeto->id])"
                             />
                             @endif
                         </td>

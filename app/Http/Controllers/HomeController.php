@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Arr;
 use App\Models\User;
 use App\Models\Utils;
-use App\Models\Projetos;
+use App\Models\Projeto;
 
 class HomeController extends Controller
 {
@@ -19,7 +19,7 @@ class HomeController extends Controller
         if (Auth::guest())
         {            
             return view('index', [
-                'projetos' => Projetos::all()
+                'projetos' => Projeto::all()
             ]);
         }
         else
@@ -52,7 +52,7 @@ class HomeController extends Controller
     {
         return view('visualizar',
         [
-            'projeto' => Projetos::find($codigoProjeto),
+            'projeto' => Projeto::find($codigoProjeto),
         ]);
     }
 }

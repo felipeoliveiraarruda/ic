@@ -16,7 +16,7 @@
     <x-portal::button full="true" :href="route('auth/google/redirect')" variant="danger" icon="fa-brands fa-google">Entrar com Gmail</x-portal::button>
 
     <x-portal::alert variant="info" title="Registro">
-        Caso você não tenha registro no sistema clique no botão.
+        Caso você não tenha registro no sistema clique no botão "Registre-se".
     </x-portal::alert>
 
     <x-portal::button full="true" :href="route('register')" icon="fa-solid fa-user-plus">Registre-se</x-portal::button>

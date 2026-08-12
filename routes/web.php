@@ -3,15 +3,18 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 
-Route::get('/',                     [HomeController::class, 'index'])->name('home');
-Route::get('/{codigoProjeto}/show', [HomeController::class, 'show'])->name('show');
+//Route::get('/',             [HomeController::class, 'index'])->name('home');
+//Route::get('/{id}/show',    [HomeController::class, 'show'])->name('show');
+
+Route::livewire('/',          'pages::index')->name('home');
+Route::livewire('/{id}/show', 'pages::visualizar')->name('show');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () 
 {
     Route::livewire('dashboard', 'pages::admin.dashboard')->name('dashboard');
     Route::livewire('projetos',  'pages::projetos')->name('projetos');
     Route::livewire('projetos/create',  'pages::projetos.create')->name('projetos.create');
-    Route::livewire('projetos/{codigoProjeto}',  'pages::projetos.show')->name('projetos.show');
+    Route::livewire('projetos/{id}',  'pages::projetos.show')->name('projetos.show');
 });
 
 

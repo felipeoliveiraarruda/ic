@@ -12,6 +12,10 @@
 
         <x-portal::input label="{{ __('Email') }}" name="email" type="email" placeholder="voce@exemplo.org" required/>
 
+        <x-portal::input label="Curso" name="curso" type="text" placeholder="Engenharia Química" required/>
+
+        <x-portal::input label="Instituição" name="instituicao" type="text" placeholder="EEL/USP" required/>
+
         <x-portal::input label="{{ __('Password') }}" name="password" type="password" placeholder="••••••••" required autocomplete="new-password" />
 
         <x-portal::input label="{{ __('Confirm Password') }}" name="password_confirmation" type="password" placeholder="••••••••" required autocomplete="new-password" />

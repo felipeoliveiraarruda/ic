@@ -12,15 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('projetos', function (Blueprint $table) {            
-            $table->id('codigoProjeto');
+            $table->id();
+            $table->integer('codigoPessoa');
             $table->string('codigoCurso');
             $table->string('tituloProjeto');
             $table->text('descricaoProjeto');
-            $table->string('numeroHorasProjeto');
             $table->string('periodoProjeto');
-            $table->text('informacoesProjeto'); 
+            $table->string('linhaPesquisaProjeto');
+            $table->char('statusExternoProjeto', 1)->default('N');            
+            $table->string('tipoBolsaProjeto');
+            $table->string('bolsaProjeto')->nullable();
+            $table->date('dataInicioProjeto');
+            $table->date('dataTerminoProjeto');
+            $table->text('informacoesProjeto');
             $table->timestamps();
             $table->softDeletes();
+            $table->integer('codigoPessoaCriacao');
+            $table->integer('codigoPessoaAlteracao');
         });
     }
 

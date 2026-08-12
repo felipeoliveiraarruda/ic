@@ -89,6 +89,8 @@ return [
                     ],
                 ],
             ],
+
+
             'acesso' => 
             [
                 'label' => 'Acesso',
@@ -115,7 +117,20 @@ return [
                         'active' => '',
                         'guest' => true,
                     ],
-                ],                               
+                ],
+            ],
+            'administracao' => 
+            [
+                'label' => 'Administração',
+                'items' => 
+                [
+                    [
+                        'label' => 'Cadastrar Projetos IC',
+                        'route' => 'admin.projetos.create',
+                        'icon' => 'fa-solid fa-diagram-project',
+                        'active' => 'admin.projetos',
+                    ],
+                ],
             ],
             'admin' => 
             [

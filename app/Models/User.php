@@ -26,7 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'cpf',
+        'curso',
+        'instituicao',
         'codpes',
         'driver',
     ];

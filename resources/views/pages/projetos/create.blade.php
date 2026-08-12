@@ -2,20 +2,22 @@
 
 use Livewire\Component;
 use Uspdev\Replicado\Graduacao;
-use Uspdev\Replicado\Posgraduacao;
 
 new class extends Component
 {
-    protected function rules()
+    /*protected function rules()
     {
         return 
         [
+            'codigoPessoa' => 'required',
             'codigoCurso' => 'required',
-            'tituloProjeto' => 'required|string|max:255',
+            'tituloProjeto' => 'required',
             'descricaoProjeto' => 'required',
-            'numeroHorasProjeto' => 'required',
-            'periodoProjeto' => 'required',
-            'informacoesProjeto' => 'required'
+            'periodoProjeto' => 'required5',
+            'linhaPesquisaProjeto' => 'required',
+            'informacoesProjeto' => 'required',
+            'dataInicioProjeto' => 'required|date',
+            'dataTerminoProjeto' => 'required|date'
         ];
     }
 
@@ -26,11 +28,10 @@ new class extends Component
             'codigoCurso.required' => 'Curso é obrigatório.',
             'tituloProjeto.required' => 'Projeto é obrigatório.',            
             'descricaoProjeto.required' => 'Descrição do Projeto é obrigatório.',
-            'numeroHorasProjeto.required' => 'Número de Horas é obrigatório.',
             'periodoProjeto.required' => 'Período é obrigatório.',
             'informacoesProjeto.required' => 'Informações do Projeto é obrigatório.',
         ];
-    }
+    }*/
 
     public function render()
     {
@@ -41,11 +42,6 @@ new class extends Component
             'Engenharia Ambiental'    => 'Engenharia Ambiental',
             'Engenharia Física'       => 'Engenharia Física',
             'Engenharia de Produção'  => 'Engenharia de Produção',
-            'Pós-Graduação em Engenharia de Materiais'  => 'Pós-Graduação em Engenharia de Materiais',
-            'Pós-Graduação em Biotecnologia Industrial' => 'Pós-Graduação em Biotecnologia Industrial',
-            'Pós-Graduação em Engenharia Química'       => 'Pós-Graduação em Engenharia Química',
-            'Mestrado Profissional Projetos Educacionais de Ciências' => 'Mestrado Profissional Projetos Educacionais de Ciências',
-            'Pós-Graduação em Meio Ambiente e Desenvolvimento' => 'Pós-Graduação em Meio Ambiente e Desenvolvimento'
         ];
 
         return view('pages.projetos.create',
@@ -59,7 +55,7 @@ new class extends Component
 @section('breadcrumbs')
     <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="hover:text-gray-700 hover:underline">Dashboard</a>
     <span>/</span>
-    <a href="{{ Route::has('admin.projetos') ? route('admin.projetos') : '#' }}" class="hover:text-gray-700 hover:underline">Projetos</a>
+    <a href="{{ Route::has('admin.projetos') ? route('admin.projetos') : '#' }}" class="hover:text-gray-700 hover:underline">Projeto</a>
     <span>/</span>
     <span>Novo Projeto</span>
 @endsection
@@ -77,7 +73,11 @@ new class extends Component
                 <x-portal::input label="Projeto" name="nome" required />
             </div>
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">                                
+            <div class="md:col-span-2">
+                <x-portal::textarea label="Descrição" name="descricaoProjeto" required></x-portal::textarea>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <x-portal::select
                     label="Curso"
                     name="codigoCurso"
@@ -87,34 +87,52 @@ new class extends Component
                             'Engenharia de Materiais' => 'Engenharia de Materiais', 
                             'Engenharia Ambiental'    => 'Engenharia Ambiental',
                             'Engenharia Física'       => 'Engenharia Física',
-                            'Engenharia de Produção'  => 'Engenharia de Produção',
-                            'Pós-Graduação em Engenharia de Materiais'  => 'Pós-Graduação em Engenharia de Materiais',
-                            'Pós-Graduação em Biotecnologia Industrial' => 'Pós-Graduação em Biotecnologia Industrial',
-                            'Pós-Graduação em Engenharia Química'       => 'Pós-Graduação em Engenharia Química',
-                            'Mestrado Profissional Projetos Educacionais de Ciências' => 'Mestrado Profissional Projetos Educacionais de Ciências',
-                            'Pós-Graduação em Meio Ambiente e Desenvolvimento' => 'Pós-Graduação em Meio Ambiente e Desenvolvimento'
+                            'Engenharia de Produção'  => 'Engenharia de Produção'
                         ]"
                     required
                 />
                 
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <x-portal::input label="Número de Horas" name="numeroHorasProjeto" required />
+                <x-portal::input label="Linha de Pesquisa" name="linhaPesquisaProjeto" required />
 
-                    <x-portal::input label="Período" name="periodoProjeto" required />
-                </div>
-            </div>
+                <x-portal::input label="Período" name="periodoProjeto" required />
 
-            <div class="md:col-span-2">
-                <x-portal::textarea label="Descrição" name="descricaoProjeto" required></x-portal::textarea>
-            </div>
-            
+                <x-portal::select
+                    label="Aceita Aluno Externo a USP"
+                    name="statusExternoProjeto"
+                    :options="[
+                            'Não'      => 'Não', 
+                            'Sim'   => 'Sim', 
+                        ]"
+                    required
+                />
+            </div>            
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-4 md:col-span-2">
+                <x-portal::select
+                    label="Bolsa"
+                    name="tipoBolsaProjeto"
+                    :options="[
+                            'Com Bolsa'      => 'Com Bolsa', 
+                            'Sem Bolsa'      => 'Sem Bolsa', 
+                            'Possível Bolsa' => 'Possível Bolsa', 
+                        ]"
+                    required
+                />
+                
+                <x-portal::input label="Tipo de Bolsa" name="bolsaProjeto"  />
+
+                <x-portal::input type="date" label="Início do Projeto" name="dataInicioProjeto" required />
+
+                <x-portal::input type="date" label="Término do Projeto" name="dataTerminoProjeto" required />
+            </div>   
+
             <div class="md:col-span-2">
                 <x-portal::textarea label="Informações" name="informacoesProjeto" required></x-portal::textarea>
-            </div>            
-            
+            </div>
+  
             <div class="md:col-span-2 flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:justify-end dark:border-gray-700">
                 <x-portal::button :href="route('admin.projetos')" variant="secondary" full="true">Cancelar</x-portal::button>
-                <x-portal::button full="true" icon="fa-save">Salvar</x-portal::button>
+                <x-portal::button type="submit" full="true" icon="fa-save">Salvar</x-portal::button>
             </div>
         </form>
     </x-portal::card>    

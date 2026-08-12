@@ -1,16 +1,16 @@
 <?php
 
 use Livewire\Component;
-use App\Models\Projetos;
+use App\Models\Projeto;
 
 new class extends Component
 {   
-    public $codigoProjeto;
+    public $id;
     public $projeto;
 
-    public function mount($codigoProjeto)
+    public function mount($id)
     {        
-        $this->projeto = Projetos::find($codigoProjeto);
+        $this->projeto = Projeto::find($id);
     }
 
     public function render()
@@ -27,9 +27,9 @@ new class extends Component
 @section('breadcrumbs')
     <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="hover:text-gray-700 hover:underline">Dashboard</a>
     <span>/</span>
-    <a href="{{ Route::has('admin.projetos') ? route('admin.projetos') : '#' }}" class="hover:text-gray-700 hover:underline">Projetos</a>
+    <a href="{{ Route::has('admin.projetos') ? route('admin.projetos') : '#' }}" class="hover:text-gray-700 hover:underline">Projeto</a>
     <span>/</span>
-    <span>Projeto # {{ $projeto->codigoProjeto }}</span>
+    <span>Projeto # {{ $projeto->id }}</span>
 @endsection
 
 <div class="space-y-6">
@@ -43,7 +43,7 @@ new class extends Component
                         </div>
                         <div>
                             <h2 class="text-base font-semibold text-gray-900">Projeto</h2>
-                            <p class="text-xs text-gray-500">ID # {{ $projeto->codigoProjeto }}</p>
+                            <p class="text-xs text-gray-500">ID # {{ $projeto->id }}</p>
                         </div>
                     </div>
                 </div>
@@ -56,6 +56,11 @@ new class extends Component
                 </div>
 
                 <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4 md:grid-cols-3">
+                    <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Descrição</dt>
+                    <dd class="md:col-span-2 text-sm text-gray-800">{{ $projeto->descricaoProjeto }}</dd>
+                </div>                
+
+                <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4 md:grid-cols-3">
                     <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Curso</dt>
                     <dd class="md:col-span-2 text-sm text-gray-800">
                         <code class="rounded-lg bg-gray-100 px-2 py-1 text-xs">{{ $projeto->codigoCurso ?? '-' }}</code>
@@ -63,26 +68,39 @@ new class extends Component
                 </div>
 
                 <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4 md:grid-cols-3">
-                    <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Número de Horas</dt>
-                    <dd class="md:col-span-2 text-sm text-gray-800">
-                        <code class="rounded-lg bg-gray-100 px-2 py-1 text-xs">{{ $projeto->numeroHorasProjeto ?? '-' }}</code>
-                    </dd>
+                    <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Linha de Pesquisa</dt>
+                    <dd class="md:col-span-2 text-sm text-gray-800">{{ $projeto->linhaPesquisaProjeto }}</dd>
+                </div>
+
+                @php
+                    $docente = Uspdev\Replicado\Pessoa::obterNome($projeto->codigoPessoa);
+                @endphp 
+
+                <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4 md:grid-cols-3">
+                    <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Docente</dt>
+                    <dd class="md:col-span-2 text-sm text-gray-800">{{ $docente }}</dd>
                 </div>
 
                 <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4 md:grid-cols-3">
                     <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Período</dt>
                     <dd class="md:col-span-2 text-sm text-gray-800">{{ $projeto->periodoProjeto }}</dd>
                 </div>
-
+                
                 <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4 md:grid-cols-3">
-                    <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Descrição</dt>
-                    <dd class="md:col-span-2 text-sm text-gray-800">{{ $projeto->descricaoProjeto }}</dd>
+                    <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Duração</dt>
+                    <dd class="md:col-span-2 text-sm text-gray-800">{{ $projeto->dataInicioProjeto->format('d/m/Y') }} - {{ $projeto->dataTerminoProjeto->format('d/m/Y') }}</dd>
                 </div>
 
                 <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4 md:grid-cols-3">
                     <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Informações</dt>
                     <dd class="md:col-span-2 text-sm text-gray-800">{{ $projeto->informacoesProjeto }}</dd>
                 </div>
+
+                <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4 md:grid-cols-3">
+                    <dt class="text-sm font-semibold uppercase tracking-wide text-gray-500">Bolsa de Estudo</dt>
+                    <dd class="md:col-span-2 text-sm text-gray-800">                        
+                    {{ $projeto->tipoBolsaProjeto == 'Com Bolsa' ? $projeto->tipoBolsaProjeto.' - '.$projeto->bolsaProjeto : $projeto->tipoBolsaProjeto }}</dd>
+                </div>                
                 
                 @if($level == 'admin')
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
