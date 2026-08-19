@@ -15,9 +15,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function ()
     Route::livewire('projetos',  'pages::projetos')->name('projetos');
     Route::livewire('projetos/create',  'pages::projetos.create')->name('projetos.create');
     Route::livewire('projetos/{id}',  'pages::projetos.show')->name('projetos.show');
+    Route::livewire('projetos/{projeto}/edit', 'pages::projetos.edit')->name('projetos.edit');
 });
-
-
 
 Route::middleware(['web'])->group(function () {
     Route::view('/portal-ui-demo-minimal', 'portal-ui::examples.minimal-showcase')->name('portal-ui.demo.minimal');

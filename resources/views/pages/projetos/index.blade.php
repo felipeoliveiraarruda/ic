@@ -6,11 +6,65 @@ use App\Models\Projeto;
 
 new class extends Component
 {
+    use WithPagination;
+
+    // Propriedades para controle do modal de exclusão
+    public bool $confirmingDeletion = false;
+    public ?int $projetoIdParaExcluir = null;
+    public ?string $tituloProjetoParaExcluir = '';
+
+    /**
+     * Abre o modal e define o projeto a ser excluído
+     */
+    public function confirmDelete(int $id): void
+    {
+        $projeto = Projeto::findOrFail($id);
+
+        // Trava de segurança: garante que o usuário comum só possa excluir o próprio projeto
+        if (session('level') == 'user' && auth()->user()->codpes != $projeto->codigoPessoaCriacao) {
+            return;
+        }
+
+        $this->projetoIdParaExcluir = $projeto->id;
+        $this->tituloProjetoParaExcluir = $projeto->tituloProjeto;
+        $this->confirmingDeletion = true;
+    }
+
+    /**
+     * Executa a exclusão do projeto selecionado
+     */
+    public function deleteProject(): void
+    {
+        if ($this->projetoIdParaExcluir) {
+            $projeto = Projeto::find($this->projetoIdParaExcluir);
+
+            if ($projeto) {
+                // Validação de permissão antes de deletar
+                if (session('level') == 'admin' || auth()->user()->codpes == $projeto->codigoPessoaCriacao) {
+                    $projeto->delete();
+                    session()->flash('success', 'Projeto excluído com sucesso!');
+                }
+            }
+        }
+
+        $this->cancelDelete();
+    }
+
+    /**
+     * Fecha o modal e limpa as variáveis de estado
+     */
+    public function cancelDelete(): void
+    {
+        $this->confirmingDeletion = false;
+        $this->projetoIdParaExcluir = null;
+        $this->tituloProjetoParaExcluir = '';
+    }
+
     public function render()
     {
         return view('pages.projetos.index',
         [
-            'projetos'  => (session('level') == 'admin' ? Projeto::paginate(5) : Projeto::all()),
+            'projetos'  => (session('level') == 'user' ? Projeto::where('codigoPessoaCriacao', auth()->user()->codpes)->paginate(10) : Projeto::all()),
             'level'     => session('level'),
         ]);
     }
@@ -28,13 +82,13 @@ new class extends Component
         title="Projetos"
         subtitle="Visão operacional dos projetos cadastrados.">
 
-        @if($level == 'admin')
         <x-slot:actions>
-            <x-portal::button icon="fa-plus" :href="route('admin.projetos.create')">Novo Projeto</x-portal::button>
+            <x-portal::button icon="fa-plus" :href="route('admin.projetos.create')">Novo Projeto IC</x-portal::button>
         </x-slot:actions>
-        @endif
 
     </x-portal::page-header>
+
+    <x-portal::flash-messages />
 
     <x-portal::card padding="false">
         <x-portal::table>
@@ -64,11 +118,10 @@ new class extends Component
                         <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->periodoProjeto }}</td>
                         <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->statusExternoProjeto == 'S' ? 'Sim' : 'Não' }}</td>
                         <td class="px-4 py-3 text-right">                            
-                            @if($level == 'admin')
+                            @if(auth()->user()->codpes == $projeto->codigoPessoaCriacao)
                             <x-portal::resource-actions
                                 :viewHref="route('admin.projetos.show', ['id' => $projeto->id])"
-                                :edit-href="'#'"
-                                :delete-onclick="'window.alert(&quot;Excluir item de demonstração&quot;)'"
+                                :editHref="route('admin.projetos.edit', ['projeto' => $projeto->id])"
                             />
                             @else
                             <x-portal::resource-actions
@@ -81,4 +134,9 @@ new class extends Component
             </x-slot:body>
         </x-portal::table>
     </x-portal::card>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    @if($confirmingDeletion)
+
+    @endif    
 </div>

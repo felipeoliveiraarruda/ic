@@ -88,6 +88,7 @@ new class extends Component
             ->when($this->filterExterno !== '', function ($query) {
                 $query->where('statusExternoProjeto', $this->filterExterno);
             })
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $temps = Projeto::select('codigoPessoa')->whereNotNull('codigoPessoa')->groupBy('codigoPessoa')->get();
@@ -144,7 +145,7 @@ new class extends Component
                 <x-portal::select
                     label="Período"
                     wire:model.live="filterPeriodo"
-                    :options="['' => 'Todos', 0 => 'Manhã', 1 => 'Tarde', 2 => 'Integral']"            
+                    :options="['' => 'Todos', 'Manhã' => 'Manhã', 'Tarde' => 'Tarde', 'Integral' => 'Integral']"            
                     wrapperClass="mb-0"
                 />
 

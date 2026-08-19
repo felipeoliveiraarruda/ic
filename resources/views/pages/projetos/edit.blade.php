@@ -2,12 +2,17 @@
 
 use Livewire\Component;
 use Livewire\Attributes\Computed;
-use App\Models\Projeto; // Certifique-se de importar a Model correta do seu projeto
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
+use App\Models\Projeto;
 use Uspdev\Replicado\Graduacao;
 use Uspdev\Replicado\Pessoa;
 
 new class extends Component
 {
+    // Instância do projeto a ser editado
+    public Projeto $projeto;
+
     // Propriedades do formulário
     public $tituloProjeto;
     public $codigoPessoa;
@@ -15,12 +20,34 @@ new class extends Component
     public $codigoCurso;
     public $linhaPesquisaProjeto;
     public $periodoProjeto;
-    public $statusExternoProjeto = 'N';
+    public $statusExternoProjeto;
     public $tipoBolsaProjeto;
     public $bolsaProjeto;
     public $dataInicioProjeto;
     public $dataTerminoProjeto;
     public $informacoesProjeto;
+
+    public function mount(Projeto $projeto)
+    {
+        $this->projeto = $projeto;
+
+        // Preenche as propriedades reativas com os dados do projeto
+        $this->fill([
+            'tituloProjeto'        => $projeto->tituloProjeto,
+            'codigoPessoa'         => $projeto->codigoPessoa,
+            'descricaoProjeto'     => $projeto->descricaoProjeto,
+            'codigoCurso'          => $projeto->codigoCurso,
+            'linhaPesquisaProjeto' => $projeto->linhaPesquisaProjeto,
+            'periodoProjeto'       => $projeto->periodoProjeto,
+            'statusExternoProjeto' => $projeto->statusExternoProjeto,
+            'tipoBolsaProjeto'     => $projeto->tipoBolsaProjeto,
+            'bolsaProjeto'         => $projeto->bolsaProjeto,
+            // Formata as datas para o padrão do input 'Y-m-d'
+            'dataInicioProjeto'    => $projeto->dataInicioProjeto ? substr($projeto->dataInicioProjeto, 0, 10) : null,
+            'dataTerminoProjeto'   => $projeto->dataTerminoProjeto ? substr($projeto->dataTerminoProjeto, 0, 10) : null,
+            'informacoesProjeto'   => $projeto->informacoesProjeto,
+        ]);
+    }
 
     // Limpa o campo de texto caso a opção selecionada deixe de ser 'Com Bolsa'
     public function updatedTipoBolsaProjeto($value)
@@ -29,6 +56,7 @@ new class extends Component
             $this->bolsaProjeto = null;
         }
     }
+
     protected function rules()
     {
         return [
@@ -50,45 +78,24 @@ new class extends Component
     protected function messages()
     {
         return [
-            'tituloProjeto.required'        => 'O título do projeto é obrigatório.',
-            'codigoPessoa.required'         => 'O docente é obrigatório',
-            'descricaoProjeto.required'     => 'A descrição do projeto é obrigatória.',
-            'codigoCurso.required'          => 'O curso é obrigatório.',
-            'linhaPesquisaProjeto.required' => 'A linha de pesquisa é obrigatória.',
-            'periodoProjeto.required'       => 'O período é obrigatório.',
-            'statusExternoProjeto.required' => 'Informe se aceita alunos externos.',
-            'tipoBolsaProjeto.required'     => 'Informe a situação da bolsa de estudo.',
-            'dataInicioProjeto.required'    => 'A data de início é obrigatória.',
-            'dataInicioProjeto.date'        => 'Informe uma data válida.',
-            'dataTerminoProjeto.required'   => 'A data de término é obrigatória.',
-            'dataTerminoProjeto.date'       => 'Informe uma data válida.',
+            'tituloProjeto.required'            => 'O título do projeto é obrigatório.',
+            'codigoPessoa.required'             => 'O docente é obrigatório.',
+            'descricaoProjeto.required'         => 'A descrição do projeto é obrigatória.',
+            'codigoCurso.required'              => 'O curso é obrigatório.',
+            'linhaPesquisaProjeto.required'     => 'A linha de pesquisa é obrigatória.',
+            'periodoProjeto.required'           => 'O período é obrigatório.',
+            'statusExternoProjeto.required'     => 'Informe se aceita alunos externos.',
+            'tipoBolsaProjeto.required'         => 'Informe a situação da bolsa de estudo.',
+            'dataInicioProjeto.required'        => 'A data de início é obrigatória.',
+            'dataInicioProjeto.date'            => 'Informe uma data válida.',
+            'dataTerminoProjeto.required'       => 'A data de término é obrigatória.',
+            'dataTerminoProjeto.date'           => 'Informe uma data válida.',
             'dataTerminoProjeto.after_or_equal' => 'A data de término deve ser igual ou posterior à data de início.',
         ];
     }
 
-    public function mount()
-    {
-        if (Auth::check()) 
-        {
-            $user = Auth::user();
-            $codpes = $user->codpes ?? $user->id ?? null;
-
-            $level = session('level');
-            $vinculos = session('vinculos', []);
-
-            // Verifica se o usuário tem vínculo de Docente
-            $isDocente = Arr::exists($vinculos, 'Docente') || in_array('Docente', $vinculos);
-
-            if ($isDocente && $codpes) 
-            {
-                $this->docentesOptions = (string) $codpes;
-            }
-        }
-    }
-
     /**
      * Propriedade computada que carrega os docentes do Replicado USP.
-     * Retorna um array associativo no formato ['codpes' => 'Nome do Docente']
      */
     #[Computed]
     public function docentesOptions(): array
@@ -96,11 +103,9 @@ new class extends Component
         $options = [];
 
         try {
-            // Busca os docentes ativos no Replicado (da unidade configurada no .env)
             $docentes = Pessoa::listarDocentes();
 
             if (is_array($docentes)) {
-                // Ordena alfabeticamente pelo nome do docente
                 usort($docentes, fn($a, $b) => strcmp($a['nompes'] ?? '', $b['nompes'] ?? ''));
 
                 foreach ($docentes as $docente) {
@@ -110,7 +115,13 @@ new class extends Component
                 }
             }
         } catch (\Throwable $e) {
-            // Silencia exceções do Replicado para evitar quebrar a página se o banco estiver indisponível
+            // Silencia exceções do Replicado
+        }
+
+        // Garante que o docente atual do projeto esteja na lista caso não esteja presente no array retornado
+        if ($this->codigoPessoa && !array_key_exists($this->codigoPessoa, $options)) {
+            $nome = Pessoa::obterNome($this->codigoPessoa) ?: $this->codigoPessoa;
+            $options[$this->codigoPessoa] = $nome;
         }
 
         return $options;
@@ -120,13 +131,12 @@ new class extends Component
     {
         $validatedData = $this->validate();
 
-        // Adiciona o código da pessoa (docente logado)
-        $validatedData['codigoPessoaCriacao'] = auth()->user()->codpes ?? auth()->user()->id;
+        // Atualiza a informação do usuário que realizou a alteração
         $validatedData['codigoPessoaAlteracao'] = auth()->user()->codpes ?? auth()->user()->id;
 
-        Projeto::create($validatedData);
+        $this->projeto->update($validatedData);
 
-        session()->flash('success', 'Projeto cadastrado com sucesso!');
+        session()->flash('success', 'Projeto atualizado com sucesso!');
 
         return redirect()->route('admin.projetos');
     }
@@ -142,8 +152,7 @@ new class extends Component
             'Engenharia de Produção'  => 'Engenharia de Produção',
         ];
 
-        return view('pages.projetos.create',
-        [
+        return view('pages.projetos.edit', [
             'cursos' => $cursos,
         ]);
     }
@@ -155,13 +164,13 @@ new class extends Component
     <span>/</span>
     <a href="{{ Route::has('admin.projetos') ? route('admin.projetos') : '#' }}" class="hover:text-gray-700 hover:underline">Projeto</a>
     <span>/</span>
-    <span>Novo Projeto</span>
+    <span>Editar Projeto</span>
 @endsection
 
 <div class="space-y-6">
     <x-portal::page-header
-        title="Novo Projeto"
-        subtitle="Formulário de cadastro do Projeto">
+        title="Editar Projeto"
+        subtitle="Formulário de edição do Projeto">
     </x-portal::page-header>
 
     <x-portal::card padding="false">
@@ -282,7 +291,7 @@ new class extends Component
   
             <div class="md:col-span-2 flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:justify-end dark:border-gray-700">
                 <x-portal::button :href="route('admin.projetos')" variant="secondary" full="true">Cancelar</x-portal::button>
-                <x-portal::button type="submit" full="true" icon="fa-save">Salvar</x-portal::button>
+                <x-portal::button type="submit" full="true" icon="fa-save">Salvar Alterações</x-portal::button>
             </div>
         </form>
     </x-portal::card>    

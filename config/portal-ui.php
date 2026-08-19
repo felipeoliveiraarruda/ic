@@ -119,19 +119,6 @@ return [
                     ],
                 ],
             ],
-            'administracao' => 
-            [
-                'label' => 'Administração',
-                'items' => 
-                [
-                    [
-                        'label' => 'Cadastrar Projetos IC',
-                        'route' => 'admin.projetos.create',
-                        'icon' => 'fa-solid fa-diagram-project',
-                        'active' => 'admin.projetos',
-                    ],
-                ],
-            ],
             'admin' => 
             [
                 'label' => 'Administração',
@@ -145,11 +132,17 @@ return [
                         'can' => 'admin',
                     ],
                     [
-                        'label' => 'Projetos',
+                        'label' => 'Projetos IC',
                         'route' => 'admin.projetos',
                         'icon' => 'fa-solid fa-diagram-project',
                         'active' => 'admin.projetos',
                         'can' => 'user',
+                    ],
+                    [
+                        'label' => 'Cadastrar Projetos IC',
+                        'route' => 'admin.projetos.create',
+                        'icon' => 'fa-plus',
+                        'active' => 'admin.projetos.create',
                     ],
                 ],                               
             ],
