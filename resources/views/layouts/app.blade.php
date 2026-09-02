@@ -1,63 +1,57 @@
-@php
-    $brand = config('portal-ui.brand', []);
-    $navigation = config('portal-ui.navigation', []);
-    $layout = config('portal-ui.layout', []);
-    $brandName = $brand['name'] ?? config('app.name', 'Sistema');
-    $pageTitle = $title ?? trim($__env->yieldContent('title', ''));
-    $documentTitle = $pageTitle !== '' ? $pageTitle.' - '.$brandName : $brandName;
-    $bodyClass = trim('h-full bg-gray-50 dark:bg-gray-900 '.($layout['body_class'] ?? ''));
-    $visibleNavigationGroups = \SistemasEel\PortalUi\Support\Navigation::groups($navigation['groups'] ?? []);
-    $hasSidebar = isset($sidebar) || $__env->hasSection('sidebar') || count($visibleNavigationGroups) > 0;
-@endphp
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
-<head>
-    @include('portal-ui::layouts.partials.head', ['documentTitle' => $documentTitle])
-</head>
-<body class="{{ $bodyClass }}" data-portal-ui="app">
-    <div
-        class="min-h-full portal-ui-layout"
-        data-portal-layout
-        data-portal-has-sidebar="{{ $hasSidebar ? 'true' : 'false' }}"
-    >
-        @if($hasSidebar)
-            <div
-                class="hidden fixed inset-0 bg-gray-900/50 z-40 lg:hidden"
-                data-portal-overlay
-                data-portal-sidebar-close
-            ></div>
+@extends('portal-ui::layouts.app')
+
+@section('topbar-actions')
+    @can('admin')
+        @if(Route::has('senhaunica-users.index'))
+            <a href="{{ route('senhaunica-users.index') }}"
+                class="text-gray-500 hover:text-portal hover:bg-gray-50 p-2 rounded-lg transition-all"
+                title="Usuários SenhaUnica">
+                <i class="fa fa-users text-lg"></i>
+            </a>
         @endif
 
-        @if($hasSidebar)
-            @include('portal-ui::layouts.partials.sidebar', ['visibleNavigationGroups' => $visibleNavigationGroups])
+        @if(Route::has('SenhaunicaLoginAsForm'))
+            <a href="{{ route('SenhaunicaLoginAsForm') }}"
+                class="text-gray-500 hover:text-portal hover:bg-gray-50 p-2 rounded-lg transition-all"
+                title="Assumir Identidade (LoginAs)">
+                <i class="fa fa-user-ninja text-lg"></i>
+            </a>
         @endif
 
-        <div
-            class="transition-all duration-300 ease-in-out"
-            data-portal-content
-        >
-            @include('portal-ui::layouts.partials.topbar', ['hasSidebar' => $hasSidebar])
+        @if(session()->has('senhaunica-socialite.undo_loginas') && Route::has('SenhaunicaUndoLoginAs'))
+            <a href="{{ route('SenhaunicaUndoLoginAs') }}"
+                class="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
+                title="Desfazer Assumir Identidade (Voltar para o meu usuário)">
+                <i class="fa fa-undo text-lg"></i>
+            </a>
+        @endif
+    @endcan
+@endsection
 
-            <main class="pt-2 lg:pt-6 pb-6">
-                <div class="px-4 sm:px-6 lg:px-8">
-                    <!-- Adicionar classes dark para o container de conteúdo -->
-                    <div class="text-gray-900 dark:text-gray-100">
-                        @isset($slot)
-                            {{ $slot }}
-                        @else
-                            @yield('content')
-                        @endisset
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
+@section('user-menu')
+    @if(session()->has('senhaunica-socialite.undo_loginas') && Route::has('SenhaunicaUndoLoginAs'))
+        <a href="{{ route('SenhaunicaUndoLoginAs') }}"
+           class="flex items-center gap-3 px-4 py-2 text-sm text-amber-700 hover:bg-amber-50">
+            <i class="fa fa-rotate-left w-4"></i>
+            <span>Desfazer LoginAs</span>
+        </a>
+    @endif
 
-    @stack('portal-ui-before-scripts')
-    @include('portal-ui::layouts.partials.scripts')
-    @stack('scripts')
-    @stack('portal-ui-after-scripts')
-    @yield('modals')
-    @livewireScripts
-</body>
-</html>
+    @can('admin')
+        @if(Route::has('senhaunica-users.index'))
+            <a href="{{ route('senhaunica-users.index') }}"
+               class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                <i class="fa fa-id-card w-4"></i>
+                <span>Usuários SenhaUnica</span>
+            </a>
+        @endif
+
+        @if(Route::has('SenhaunicaLoginAsForm'))
+            <a href="{{ route('SenhaunicaLoginAsForm') }}"
+               class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                <i class="fa fa-user-secret w-4"></i>
+                <span>Assumir identidade</span>
+            </a>
+        @endif
+    @endcan
+@endsection
