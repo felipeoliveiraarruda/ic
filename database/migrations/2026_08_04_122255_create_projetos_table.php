@@ -6,33 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('projetos', function (Blueprint $table) {            
+        Schema::create('projetos', function (Blueprint $table) {
             $table->id();
-            $table->integer('codigoPessoa');
+            $table->unsignedBigInteger('codigoPessoaResponsavel');
             $table->string('tituloProjeto');
-            $table->text('descricaoProjeto');
-            $table->string('linhaPesquisaProjeto');
-            $table->char('alunosExternoProjeto', 1)->default('N');
-            $table->string('tipoBolsaProjeto');
+            $table->text('descricaoProjeto')->nullable();
+            $table->string('linhaPesquisaProjeto')->nullable();
+            $table->string('statusExternoProjeto')->nullable();
+            $table->string('tipoBolsaProjeto')->nullable();
             $table->string('bolsaProjeto')->nullable();
+            $table->integer('numeroVagaProjeto')->default(1);
             $table->date('dataInicioProjeto');
             $table->date('dataTerminoProjeto');
-            $table->text('informacoesProjeto');
+            $table->text('informacoesProjeto')->nullable();
+            
+            $table->unsignedBigInteger('codigoPessoaCriacao')->nullable();
+            $table->unsignedBigInteger('codigoPessoaAlteracao')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->integer('codigoPessoaCriacao');
-            $table->integer('codigoPessoaAlteracao');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('projetos');
