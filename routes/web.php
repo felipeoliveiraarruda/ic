@@ -9,14 +9,15 @@ use App\Http\Controllers\HomeController;
 Route::livewire('/',          'pages::index')->name('home');
 Route::livewire('/{id}/show', 'pages::visualizar')->name('show');
 
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () 
+
+/*Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () 
 {
     Route::livewire('dashboard', 'pages::admin.dashboard')->name('dashboard');
     Route::livewire('projetos',  'pages::projetos')->name('projetos');
     Route::livewire('projetos/create',  'pages::projetos.create')->name('projetos.create');
     Route::livewire('projetos/{id}',  'pages::projetos.show')->name('projetos.show');
     Route::livewire('projetos/{projeto}/edit', 'pages::projetos.edit')->name('projetos.edit');
-});
+});*/
 
 Route::middleware(['web'])->group(function () {
     Route::view('/portal-ui-demo-minimal', 'portal-ui::examples.minimal-showcase')->name('portal-ui.demo.minimal');
@@ -27,3 +28,4 @@ Route::middleware(['web'])->group(function () {
 
 
 require __DIR__.'/auth.php';
+require __DIR__.'/admin.php';

@@ -21,9 +21,9 @@ return new class extends Migration
             $table->date('dataInicioProjeto');
             $table->date('dataTerminoProjeto');
             $table->text('informacoesProjeto')->nullable();
-            
-            $table->unsignedBigInteger('codigoPessoaCriacao')->nullable();
-            $table->unsignedBigInteger('codigoPessoaAlteracao')->nullable();
+            $table->text('preRequisitosProjeto')->nullable();            
+            $table->unsignedBigInteger('codigoPessoaCriacao');
+            $table->unsignedBigInteger('codigoPessoaAlteracao');
             $table->timestamps();
             $table->softDeletes();
         });

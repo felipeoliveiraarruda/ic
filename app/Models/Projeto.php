@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use App\Traits\Auditavel;
-use USPdev\Replicado\Pessoa;
+use Uspdev\Replicado\Pessoa;
 
 class Projeto extends Model
 {
@@ -17,6 +17,7 @@ class Projeto extends Model
        
     protected $fillable = [
         'codigoPessoaResponsavel',
+        'nomePessoaResponsavel',
         'tituloProjeto',
         'descricaoProjeto',
         'linhaPesquisaProjeto',
@@ -26,7 +27,9 @@ class Projeto extends Model
         'numeroVagaProjeto',
         'dataInicioProjeto',
         'dataTerminoProjeto',
+        'preRequisitoProjeto',
         'informacoesProjeto',
+        'preRequisitosProjeto',
         'codigoPessoaCriacao',
         'codigoPessoaAlteracao',
     ];
@@ -36,15 +39,20 @@ class Projeto extends Model
         'dataTerminoProjeto' => 'date',
     ];
 
-    public function preRequisitos(): HasMany
+    public function cursos(): HasMany
     {
-        return $this->hasMany(PreRequisito::class, 'codigoProjeto');
+        return $this->hasMany(Curso::class, 'codigoProjeto');
     }
 
     public function editais(): HasMany
     {
         return $this->hasMany(Edital::class, 'codigoProjeto');
     }
+
+    public function interesses(): HasMany
+    {
+        return $this->hasMany(Interesse::class, 'codigoProjeto');
+    }    
 
     // Exemplo no Model Projeto.php
     public function getResponsavelAttribute(): ?array

@@ -13,10 +13,9 @@ return new class extends Migration
             $table->foreignId('codigoEdital')->constrained('editais')->onDelete('cascade');
             $table->string('cursoInscricao');
             $table->string('instituicaoInscricao');
-            $table->string('historicoEscolarInscricao')->nullable();
-            
-            $table->unsignedBigInteger('codigoPessoaCriacao')->nullable();
-            $table->unsignedBigInteger('codigoPessoaAlteracao')->nullable();
+            $table->string('historicoEscolarInscricao');
+            $table->unsignedBigInteger('codigoPessoaCriacao');
+            $table->unsignedBigInteger('codigoPessoaAlteracao');
             $table->timestamps();
             $table->softDeletes();
         });

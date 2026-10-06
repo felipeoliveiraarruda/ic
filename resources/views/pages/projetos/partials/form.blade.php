@@ -178,3 +178,70 @@
             <div class="md:col-span-2 flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:justify-end dark:border-gray-700">
 
 -->
+
+<!--<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+    <div class="md:col-span-2">
+        <x-portal::textarea 
+            label="Descrição do Projeto" 
+            name="descricaoProjeto" 
+            wire:model="descricaoProjeto" 
+            required>
+        </x-portal::textarea>
+    </div>
+
+    <div class="md:col-span-2">
+        <x-portal::textarea 
+            label="Informações do Projeto" 
+            name="informacoesProjeto" 
+            wire:model="informacoesProjeto">
+        </x-portal::textarea>
+    </div>
+</div> 
+
+<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+    <x-portal::input 
+        label="Linha de Pesquisa" 
+        name="linhaPesquisaProjeto" 
+        wire:model="linhaPesquisaProjeto" 
+        required 
+    />
+
+    <x-portal::select
+        label="Aceita Aluno Externo a USP"
+        name="statusExternoProjeto"
+        wire:model="statusExternoProjeto"
+        :options="[
+            'N' => 'Não', 
+            'S' => 'Sim', 
+        ]"
+        required
+    />
+
+    <x-portal::select
+        label="Bolsa"
+        name="tipoBolsaProjeto"
+        wire:model.live="tipoBolsaProjeto"
+        :options="[
+            'Com Bolsa'      => 'Com Bolsa', 
+            'Sem Bolsa'      => 'Sem Bolsa', 
+            'Possível Bolsa' => 'Possível Bolsa', 
+        ]"
+        required
+    />
+    
+    <x-portal::input 
+        label="Tipo de Bolsa" 
+        name="bolsaProjeto" 
+        wire:model="bolsaProjeto"
+        :disabled="$tipoBolsaProjeto !== 'Com Bolsa'"
+    />
+
+    <div class="md:col-span-2">
+        <x-portal::textarea 
+            label="Informações do Projeto" 
+            name="informacoesProjeto" 
+            wire:model="informacoesProjeto">
+        </x-portal::textarea>
+    </div>    
+
+</div>-->

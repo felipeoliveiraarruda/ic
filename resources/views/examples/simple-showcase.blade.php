@@ -178,6 +178,9 @@
                 <div class="md:col-span-2">
                     <x-portal::textarea label="Descrição" name="descricao">Sistema usado como demonstração visual do tema.</x-portal::textarea>
                 </div>
+                <div class="md:col-span-2">
+                    <x-portal::textarea label="Descrição" name="descricao">Sistema usado como demonstração visual do tema.</x-portal::textarea>
+                </div>
                 <div class="md:col-span-2 flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:justify-end dark:border-gray-700">
                     <x-portal::button variant="secondary" full="true">Cancelar</x-portal::button>
                     <x-portal::button full="true" icon="fa-save">Salvar alterações</x-portal::button>

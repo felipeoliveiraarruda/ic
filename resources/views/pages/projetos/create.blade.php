@@ -184,7 +184,6 @@ new class extends Component
 
     <x-portal::card padding="false">
         <form wire:submit.prevent="save" class="grid grid-cols-1 gap-4 p-6 md:grid">
-
                 <x-portal::button :href="route('admin.projetos')" variant="secondary" full="true">Cancelar</x-portal::button>
                 <x-portal::button type="submit" full="true" icon="fa-save">Salvar</x-portal::button>
             </div>

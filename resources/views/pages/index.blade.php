@@ -1,41 +1,25 @@
 <?php
-
 use Livewire\Component;
+use Livewire\WithPagination;
 use Livewire\Attributes\Url;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Arr;
-use App\Models\User;
 use App\Models\Utils;
 use App\Models\Projeto;
 
 new class extends Component
 {
-    // Propriedades reativas sincronizadas com os inputs da view e com a URL
+    use WithPagination;
+
     #[Url]
     public string $search = '';
 
-    #[Url]
-    public string $filterDocente = '';
-
-    #[Url]
-    public string $filterPeriodo = '';
-
-    #[Url]
-    public string $filterExterno = '';
-
-    public $docentes = [];
-
     public function mount()
-    {
+    {   
         if (Auth::check()) 
         {
             Utils::setSession(Auth::user()->id);
 
             $level = session('level');
-            $vinculos = session('vinculos', []);
 
             if ($level === 'admin' || $level === 'manager') 
             {
@@ -56,56 +40,47 @@ new class extends Component
         }
     }
 
-    // Limpa todos os filtros ativos
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function cleanFilters(): void
     {
-        $this->reset(['search', 'filterDocente', 'filterPeriodo', 'filterExterno']);
+        $this->reset('search');
+        $this->resetPage();
     }
 
     public function render()
     {
         $projetos = Projeto::query()
-            // Filtro de texto genérico (Busca em Título, Curso, Linha de Pesquisa e Cód. Docente)
+            ->with(['editais', 'cursos'])
             ->when($this->search, function ($query) 
             {
-                $searchTerm = '%' . $this->search . '%';
-                
-                $query->where(function ($q) use ($searchTerm) {
+                $searchTerm = '%' . trim($this->search) . '%';
+                $termoLower = mb_strtolower(trim($this->search), 'UTF-8');
+
+                // Consulta direta e ultrarrápida via SQL local
+                $query->where(function ($q) use ($searchTerm, $statusExternoBusca) {
                     $q->where('tituloProjeto', 'like', $searchTerm)
-                      ->orWhere('codigoCurso', 'like', $searchTerm)
-                      ->orWhere('linhaPesquisaProjeto', 'like', $searchTerm);
+                      ->orWhere('linhaPesquisaProjeto', 'like', $searchTerm)
+                      ->orWhere('codigoPessoaResponsavel', 'like', $searchTerm)
+                      ->orWhere('nomePessoaResponsavel', 'like', $searchTerm);
+
+
+                    $q->orWhereHas('cursos', function ($cursoQuery) use ($searchTerm) {
+                        $cursoQuery->where('codigoCurso', 'like', $searchTerm)
+                                   ->orWhere('nomeCurso', 'like', $searchTerm);
+                    });
                 });
-            })
-            // Filtro por Docente
-            ->when($this->filterDocente !== '', function ($query) {
-                $query->where('codigoPessoa', $this->filterDocente);
-            })
-            // Filtro por Período
-            ->when($this->filterPeriodo !== '', function ($query) {
-                $query->where('periodoProjeto', $this->filterPeriodo);
-            })
-            // Filtro por Aceite de Aluno Externo (S/N)
-            ->when($this->filterExterno !== '', function ($query) {
-                $query->where('statusExternoProjeto', $this->filterExterno);
             })
             ->where('dataInicioProjeto', '>=', date('Y-m-d'))
             ->orderBy('created_at', 'desc')
-            ->get();
-
-        $temps = Projeto::select('codigoPessoa')->whereNotNull('codigoPessoa')->groupBy('codigoPessoa')->get();
-
-        foreach($temps as $temp)
-        {
-            $docente = Uspdev\Replicado\Pessoa::obterNome($temp->codigoPessoa);
-            $this->docentes[$temp->codigoPessoa] = $docente;            
-        }
-
-        asort($this->docentes, SORT_LOCALE_STRING);        
+            ->paginate(10);
 
         return view('pages.index', 
         [
             'projetos' => $projetos,
-            'docentes' => $this->docentes,
         ]);
     }
 };
@@ -117,7 +92,7 @@ new class extends Component
                 <div class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
                     <i class="fa fa-layer-group text-white text-2xl"></i>
                 </div>
-                <div zn_id="75">
+                <div>
                     <h1 class="text-2xl font-bold text-white mb-1">
                        Banco de Ofertas - Iniciação Científica EEL/USP
                     </h1>
@@ -131,81 +106,85 @@ new class extends Component
             Nenhum projeto disponível no momento
         </x-portal::alert>    
     @else
-    <x-portal::card>
-        <div class="grid grid-cols-1 gap-4 md:grid">
-            <x-portal::input
-                label="Buscar"
-                wire:model.live.debounce.300ms="search"
-                placeholder="Busque por Projeto, Curso, Linha de Pesquisa..."
-                wrapperClass="mb-0"
-            />
+        <x-portal::card>
+            <div class="grid grid-cols-4 gap-4 md:grid-cols-3">
+                <!-- Ocupa 3 das 4 colunas -->
+                <div class="md:col-span-2">
+                    <x-portal::input
+                        wire:model.live.debounce.300ms="search"
+                        placeholder="Busque por Projeto, Curso, Docente ou Linha de Pesquisa"
+                        wrapperClass="mb-0"
+                    />
+                </div>
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <x-portal::select
-                    label="Docente"
-                    wire:model.live="filterDocente"
-                    :options="$docentes"
-                    wrapperClass="mb-0"
-                />
-
-                <x-portal::select
-                    label="Período"
-                    wire:model.live="filterPeriodo"
-                    :options="['' => 'Todos', 'Manhã' => 'Manhã', 'Tarde' => 'Tarde', 'Integral' => 'Integral']"            
-                    wrapperClass="mb-0"
-                />
-
-                <x-portal::select
-                    label="Aluno Externo a USP"
-                    wire:model.live="filterExterno"
-                    :options="['' => 'Todos', 'S' => 'Sim', 'N' => 'Não']"
-                    wrapperClass="mb-0"
-                />
-            </div> 
-
-            <div class="flex flex-col justify-end">
-                <x-portal::button full="true" variant="secondary" icon="fa-eraser" click="cleanFilters">Limpar filtros</x-portal::button>
+                <!-- Ocupa 1 coluna -->
+                <div class="flex flex-col justify-end md:col-span-1">
+                    <x-portal::button 
+                        variant="secondary" 
+                        icon="fa-eraser" 
+                        wire:click="cleanFilters"
+                    >
+                        Limpar filtros
+                    </x-portal::button>
+                </div>                
             </div>
-        </div>
-    </x-portal::card>
+        </x-portal::card>
 
-    <x-portal::card padding="false">
-        <x-portal::table>
-            <x-slot:head>
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Projeto</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Curso</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Linha de Pesquisa</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Docente</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Período</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Aceita Aluno Externo?</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Ações</th>
-                </tr>
-            </x-slot:head>
-
-            <x-slot:body>
-                @foreach($projetos as $projeto)
-                    @php
-                        $docente = Uspdev\Replicado\Pessoa::obterNome($projeto->codigoPessoa);
-                    @endphp 
-
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40">
-                        <td class="px-4 py-3 text-sm text-gray-800 dark:text-gray-200">{{ $projeto->tituloProjeto }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->codigoCurso }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->linhaPesquisaProjeto }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $docente }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->periodoProjeto }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->statusExternoProjeto == 'S' ? 'Sim' : 'Não' }}</td>
-                        <td class="px-4 py-3 text-right">
-                            <x-portal::resource-actions
-                                :viewHref="route('show', ['id' => $projeto->id])"
-                                mode="label"
-                            />
-                        </td>
+        <x-portal::card padding="false">
+            <x-portal::table>
+                <x-slot:head>
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Projeto</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Docente</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Curso(s)</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Linha de Pesquisa</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Aluno Externo a USP?</th>
+                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"></th>
                     </tr>
-                @endforeach
-            </x-slot:body>
-        </x-portal::table>
-    </x-portal::card>
+                </x-slot:head>
+
+                <x-slot:body>
+                    @foreach($projetos as $projeto)
+                        <tr>
+                            <td class="px-4 py-3">
+                                <div class="flex items-start gap-3">
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $projeto->tituloProjeto }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Inscrições:                                         
+                                            {{ $projeto->editais->first()?->dataInicioEdital ? \Carbon\Carbon::parse($projeto->editais->first()->dataInicioEdital)->format('d/m/Y') : '-' }} - 
+                                            {{ $projeto->editais->first()?->dataTerminoEdital ? \Carbon\Carbon::parse($projeto->editais->first()->dataTerminoEdital)->format('d/m/Y') : '-' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->nomePessoaResponsavel }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                                @forelse($projeto->cursos as $curso)
+                                    @php
+                                        $temp = explode('|', $curso->codigoCurso);
+                                        $nomeCurso = Uspdev\Replicado\Graduacao::nomeCurso($temp[0]);
+                                    @endphp
+                                    <span class="inline-flex items-center px-2 py-0.5 mb-1 rounded text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                        {{ $nomeCurso ?: $curso->nomeCurso ?: $curso->codigoCurso }}
+                                    </span>
+                                @empty
+                                    <span class="text-xs text-gray-400 italic">Não informada</span>
+                                @endforelse
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->linhaPesquisaProjeto }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $projeto->statusExternoProjeto == 'S' ? 'Sim' : 'Não' }}</td>
+                            <td class="px-4 py-3 text-right">
+                                <x-portal::resource-actions
+                                    only="view"
+                                    mode="icon"
+                                    :viewHref="route('show', ['id' => $projeto->id])"
+                                    viewVariant="ghost"
+                                />                                 
+                            </td>
+                        </tr>
+                    @endforeach
+                </x-slot:body>
+            </x-portal::table>
+        </x-portal::card>
     @endif
 </div>

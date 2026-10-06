@@ -14,6 +14,8 @@ class Edital extends Model
     use \Spatie\Permission\Traits\HasRoles;
     use HasFactory, Notifiable, SoftDeletes, Auditavel;
 
+    protected $table = 'editais';
+
     protected $fillable = [
         'codigoProjeto',
         'dataInicioEdital',
