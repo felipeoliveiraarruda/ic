@@ -14,10 +14,10 @@ return new class extends Migration
             $table->string('cursoInscricao');
             $table->string('instituicaoInscricao');
             $table->string('historicoEscolarInscricao');
-            $table->unsignedBigInteger('codigoPessoaCriacao');
-            $table->unsignedBigInteger('codigoPessoaAlteracao');
             $table->timestamps();
             $table->softDeletes();
+            $table->unsignedBigInteger('codigoUsuarioCriacao');
+            $table->unsignedBigInteger('codigoUsuarioAlteracao');   
         });
     }
 

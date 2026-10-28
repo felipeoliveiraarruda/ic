@@ -11,21 +11,22 @@ return new class extends Migration
         Schema::create('projetos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('codigoPessoaResponsavel');
+            $table->string('nomePessoaResponsavel')->nullable();
             $table->string('tituloProjeto');
-            $table->text('descricaoProjeto')->nullable();
-            $table->string('linhaPesquisaProjeto')->nullable();
-            $table->string('statusExternoProjeto')->nullable();
-            $table->string('tipoBolsaProjeto')->nullable();
+            $table->text('descricaoProjeto');
+            $table->string('linhaPesquisaProjeto');
+            $table->string('statusExternoProjeto');
+            $table->string('tipoBolsaProjeto');
             $table->string('bolsaProjeto')->nullable();
             $table->integer('numeroVagaProjeto')->default(1);
             $table->date('dataInicioProjeto');
             $table->date('dataTerminoProjeto');
             $table->text('informacoesProjeto')->nullable();
             $table->text('preRequisitosProjeto')->nullable();            
-            $table->unsignedBigInteger('codigoPessoaCriacao');
-            $table->unsignedBigInteger('codigoPessoaAlteracao');
             $table->timestamps();
             $table->softDeletes();
+            $table->unsignedBigInteger('codigoUsuarioCriacao');
+            $table->unsignedBigInteger('codigoUsuarioAlteracao');
         });
     }
 

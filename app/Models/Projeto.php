@@ -30,8 +30,8 @@ class Projeto extends Model
         'preRequisitoProjeto',
         'informacoesProjeto',
         'preRequisitosProjeto',
-        'codigoPessoaCriacao',
-        'codigoPessoaAlteracao',
+        'codigoUsuarioCriacao',
+        'codigoUsuarioAlteracao',
     ];
 
     protected $casts = [

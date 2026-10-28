@@ -12,9 +12,11 @@ trait Auditavel
         {
             if (Auth::check()) 
             {
-                $userCodpes = Auth::user()->codpes ?? Auth::user()->id;
+                /*$userCodpes = Auth::user()->codpes ?? Auth::user()->id;
                 $model->codigoPessoaCriacao = $model->codigoPessoaCriacao ?? $userCodpes;
-                $model->codigoPessoaAlteracao = $model->codigoPessoaAlteracao ?? $userCodpes;
+                $model->codigoPessoaAlteracao = $model->codigoPessoaAlteracao ?? $userCodpes;*/
+                $model->codigoUsuarioCriacao    = Auth::user()->id;
+                $model->codigoUsuarioAlteracao  = Auth::user()->id;
             }
         });
 
@@ -22,7 +24,8 @@ trait Auditavel
         {
             if (Auth::check()) 
             {
-                $model->codigoPessoaAlteracao = Auth::user()->codpes ?? Auth::user()->id;
+                //$model->codigoPessoaAlteracao = Auth::user()->codpes ?? Auth::user()->id;
+                $model->codigoUsuarioAlteracao  = Auth::user()->id;
             }
         });
     }

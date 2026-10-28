@@ -19,8 +19,8 @@ class Inscricao extends Model
         'cursoInscricao',
         'instituicaoInscricao',
         'historicoEscolarInscricao',
-        'codigoPessoaCriacao',
-        'codigoPessoaAlteracao',
+        'codigoUsuarioCriacao',
+        'codigoUsuarioAlteracao',
     ];
 
     public function edital(): BelongsTo

@@ -20,8 +20,8 @@ class Curso extends Model
         'codigoProjeto',
         'codigoCurso',
         'nomeCurso',
-        'codigoPessoaCriacao',
-        'codigoPessoaAlteracao',
+        'codigoUsuarioCriacao',
+        'codigoUsuarioAlteracao',
     ];
 
     public function projeto(): BelongsTo

@@ -25,13 +25,6 @@ class Utils extends Model
         $vinculos = User::obterVinculos($id);
         session(['vinculos' => '']);
         session(['vinculos' => $vinculos]);
-        
-        if (in_array('Docente', $vinculos) && $level == 'user')        
-        {
-            $user = User::find(Auth::user()->id);
-            $user->revokePermissionTo('user');
-            $user->givePermissionTo('manager');
-        }
     }
 
     function tratarNome($nome)

@@ -20,8 +20,8 @@ class Edital extends Model
         'codigoProjeto',
         'dataInicioEdital',
         'dataTerminoEdital',
-        'codigoPessoaCriacao',
-        'codigoPessoaAlteracao',
+        'codigoUsuarioCriacao',
+        'codigoUsuarioAlteracao',
     ];
 
     protected $casts = [

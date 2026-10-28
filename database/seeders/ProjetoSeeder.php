@@ -170,10 +170,9 @@ class ProjetoSeeder extends Seeder
             $tipoBolsa = $tipos[array_rand($tipos)];
 
             $projetos[] = [
-                'codigoPessoa'          => $docente,
-                'codigoCurso'           => $cursos[array_rand($cursos)],
+                'codigoPessoaResponsavel' => $docente,
+                //'codigoCurso'           => $cursos[array_rand($cursos)],
                 'tituloProjeto'         => "Projeto de Extensão " . Str::random(5),
-                'periodoProjeto'        => $periodos[array_rand($periodos)],
                 'linhaPesquisaProjeto'  => $linhas[array_rand($linhas)],
                 'statusExternoProjeto'  => rand(0, 1) ? 'S' : 'N',
                 'tipoBolsaProjeto'      => $tipoBolsa,
@@ -182,8 +181,8 @@ class ProjetoSeeder extends Seeder
                 'dataTerminoProjeto'    => now()->addMonths(rand(6, 12))->format('Y-m-d'),
                 'descricaoProjeto'      => "Descrição detalhada sobre as atividades do projeto {$i}.",
                 'informacoesProjeto'    => "Informações adicionais e requisitos do projeto {$i}.",
-                'codigoPessoaCriacao'   => $docente,
-                'codigoPessoaAlteracao' => $docente,
+                'codigoUsuarioCriacao'   => $docente,
+                'codigoUsuarioAlteracao' => $docente,
                 'created_at'            => now(),
                 'updated_at'            => now(),
                 'deleted_at'            => null,

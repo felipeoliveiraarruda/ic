@@ -12,10 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('codigoProjeto')->constrained('projetos')->onDelete('cascade');
             $table->char('codigoCurso', 10);
-            $table->unsignedBigInteger('codigoPessoaCriacao');
-            $table->unsignedBigInteger('codigoPessoaAlteracao');
+            $table->string('nomeCurso')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->unsignedBigInteger('codigoUsuarioCriacao');
+            $table->unsignedBigInteger('codigoUsuarioAlteracao');
         });
     }
 

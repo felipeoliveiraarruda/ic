@@ -1,221 +1,150 @@
 <?php
-namespace App\Livewire;
 
 use Livewire\Component;
-use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
-use App\Models\Projeto;
-use App\Models\PreRequisito;
+use Livewire\Attributes\Computed;
+use App\Models\MenuItem;
+use App\Models\MenuGroup;
+use Spatie\Permission\Models\Permission;
 
-#[Layout('portal-ui::master')]
-class GerenciarProjetos extends Component
+new class extends Component
 {
-    use WithPagination;
+    // Campos do formulário
+    public ?int $menu_group_id      = null;
+    public ?int $parent_id          = null;
+    public string $label            = '';
+    public string $route            = '';
+    public string $url              = '';
+    public string $icon             = 'fa-solid fa-circle';
+    public string $active_pattern   = '';
+    public string $can_permission   = '';
+    public int $order               = 1;
+    public string $target           = '';
+    public bool $is_active          = true;
+    public bool $is_guest_only      = false;
+    public bool $is_external        = false;
 
-    protected string $paginationTheme = 'bootstrap';
+    // Armazena as permissões selecionadas nos checkboxes
+    public array $selectedPermissions = [];
 
-    public string $busca = '';
-    public bool $modalAberto = false;
-    public ?int $projetoIdEmEdicao = null;
-
-    #[Validate('required|integer')]
-    public $codigoPessoaResponsavel;
-
-    #[Validate('required|string|max:255')]
-    public $tituloProjeto = '';
-
-    #[Validate('nullable|string')]
-    public $descricaoProjeto = '';
-
-    #[Validate('nullable|string|max:255')]
-    public $linhaPesquisaProjeto = '';
-
-    #[Validate('nullable|string|max:255')]
-    public $statusExternoProjeto = '';
-
-    #[Validate('nullable|string|max:255')]
-    public $tipoBolsaProjeto = '';
-
-    #[Validate('nullable|string|max:255')]
-    public $bolsaProjeto = '';
-
-    #[Validate('required|integer|min:1')]
-    public $numeroVagaProjeto = 1;
-
-    #[Validate('required|date')]
-    public $dataInicioProjeto = '';
-
-    #[Validate('required|date|after_or_equal:dataInicioProjeto')]
-    public $dataTerminoProjeto = '';
-
-    #[Validate('nullable|string')]
-    public $informacoesProjeto = '';
-
-    // Campos do Pré-Requisito
-    public ?int $projetoSelecionadoId = null;
-    public $codigoCursoReq;
-    public $periodoRequisito;
-
-    public function abrirModalCriar(): void
+    protected function rules(): array
     {
-        $this->resetValidation();
-        $this->reset(['projetoIdEmEdicao', 'tituloProjeto', 'descricaoProjeto', 'linhaPesquisaProjeto', 'statusExternoProjeto', 'tipoBolsaProjeto', 'bolsaProjeto', 'numeroVagaProjeto', 'dataInicioProjeto', 'dataTerminoProjeto', 'informacoesProjeto']);
-        $this->codigoPessoaResponsavel = auth()->user()->codpes ?? auth()->user()->id;
-        $this->modalAberto = true;
+        return [
+            'menu_group_id'  => 'required|exists:menu_groups,id',
+            'parent_id'      => 'nullable|exists:menu_items,id',
+            'label'          => 'required|string|max:255',
+            'route'          => 'nullable|string|max:255',
+            'url'            => 'nullable|string|max:255',
+            'icon'           => 'nullable|string|max:255',
+            'active_pattern' => 'nullable|string|max:255',
+            'can_permission' => 'nullable|string|max:255',
+            'order'          => 'required|integer|min:0',
+            'target'         => 'nullable|string|max:50',
+            'is_active'      => 'boolean',
+            'is_guest_only'  => 'boolean',
+            'is_external'    => 'boolean',
+            'selectedPermissions' => 'nullable|array',
+        ];
     }
 
-    public function salvar(): void
-    {
-        $dados = $this->validate();
+    // Oculta a mensagem de erro para a regra 'required'
+    protected array $messages = [
+        'required' => '',
+    ];
 
-        if ($this->projetoIdEmEdicao) {
-            Projeto::findOrFail($this->projetoIdEmEdicao)->update($dados);
-            session()->flash('success', 'Projeto atualizado com sucesso!');
-        } else {
-            Projeto::create($dados);
-            session()->flash('success', 'Projeto criado com sucesso!');
+    public function mount(): void
+    {
+        // Define o primeiro grupo como padrão, caso exista
+        $firstGroup = MenuGroup::where('is_active', true)->orderBy('order')->first();
+        if ($firstGroup) {
+            $this->menu_group_id = $firstGroup->id;
         }
-
-        $this->modalAberto = false;
     }
 
-    public function excluir(int $id): void
+    public function salvar()
     {
-        $projeto = Projeto::findOrFail($id);
+        $this->validate();
 
-        if ($projeto->editais()->exists()) {
-            session()->flash('error', 'Não é possível excluir projetos vinculados a editais.');
-            return;
-        }
+        // Converte o array de permissões selecionadas em string separada por vírgulas
+        $canPermission = !empty($this->selectedPermissions) 
+            ? implode('|', $this->selectedPermissions) 
+            : null;        
 
-        $projeto->delete();
-        session()->flash('success', 'Projeto removido com sucesso!');
-    }
-
-    public function adicionarPreRequisito(): void
-    {
-        $this->validate([
-            'codigoCursoReq' => 'required|integer',
-            'periodoRequisito' => 'required|string|max:255',
+        MenuItem::create([
+            'menu_group_id'  => $this->menu_group_id,
+            'parent_id'      => $this->parent_id ?: null,
+            'label'          => $this->label,
+            'route'          => $this->route ?: null,
+            'url'            => $this->url ?: null,
+            'icon'           => $this->icon ?: 'fa-solid fa-circle',
+            'active_pattern' => $this->active_pattern ?: null,
+            'can_permission' => $canPermission,
+            'order'          => $this->order,
+            'target'         => $this->target ?: null,
+            'is_active'      => $this->is_active,
+            'is_guest_only'  => $this->is_guest_only,
+            'is_external'    => $this->is_external,
         ]);
 
-        PreRequisito::create([
-            'codigoProjeto' => $this->projetoSelecionadoId,
-            'codigoCurso' => $this->codigoCursoReq,
-            'periodoRequisito' => $this->periodoRequisito,
-        ]);
+        session()->flash('success', 'Item de menu criado com sucesso!');
 
-        $this->reset(['codigoCursoReq', 'periodoRequisito']);
-        session()->flash('success', 'Pré-requisito adicionado!');
+        return redirect()->route('admin.menus.index');
     }
+
+    #[Computed]
+    public function gruposOptions(): array
+    {
+        $options = [];
+               
+        $grupos = MenuGroup::where('is_active', true)->orderBy('order')->get();
+                
+        foreach ($grupos as $grupo) 
+        {
+            $options[$grupo->id] = $grupo->label;
+        }
+
+        return $options;
+    }
+
+    #[Computed]
+    public function itensOptions(): array
+    {
+        $options = [];
+               
+        $itens = MenuItem::whereNull('parent_id')->orderBy('label')->get();
+                
+        foreach ($itens as $item) 
+        {
+            $options[$item->id] = $item->label;
+        }
+
+        return $options;
+    }    
 
     public function render()
     {
-        $projetos = Projeto::with('preRequisitos')
-            ->when($this->busca, fn($q) => $q->where('tituloProjeto', 'like', "%{$this->busca}%"))
-            ->latest()
-            ->paginate(10);
-
-        return <<<'HTML'
-        <div>
-            <div class="card card-outline card-primary">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title font-weight-bold">Gestão de Projetos</h3>
-                    <button wire:click="abrirModalCriar" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus"></i> Novo Projeto
-                    </button>
-                </div>
-                <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}</div>
-                    @endif
-                    @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}</div>
-                    @endif
-
-                    <div class="mb-3">
-                        <input type="text" wire:model.live.debounce.300ms="busca" class="form-control" placeholder="Buscar projeto por título...">
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Título</th>
-                                    <th>Vagas</th>
-                                    <th>Vigência</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($projetos as $proj)
-                                    <tr wire:key="proj-{{ $proj->id }}">
-                                        <td>{{ $proj->id }}</td>
-                                        <td><strong>{{ $proj->tituloProjeto }}</strong></td>
-                                        <td>{{ $proj->numeroVagaProjeto }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($proj->dataInicioProjeto)->format('d/m/Y') }} a {{ \Carbon\Carbon::parse($proj->dataTerminoProjeto)->format('d/m/Y') }}</td>
-                                        <td>
-                                            <button wire:click="excluir({{ $proj->id }})" wire:confirm="Excluir este projeto?" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="5" class="text-center">Nenhum projeto cadastrado.</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    {{ $projetos->links() }}
-                </div>
-            </div>
-
-            @if($modalAberto)
-            <div class="modal d-block bg-dark bg-opacity-50" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title font-weight-bold">Cadastrar Projeto</h5>
-                            <button type="button" wire:click="$set('modalAberto', false)" class="close">&times;</button>
-                        </div>
-                        <form wire:submit="salvar">
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>Título do Projeto *</label>
-                                    <input type="text" wire:model="tituloProjeto" class="form-control">
-                                    @error('tituloProjeto') <span class="text-danger small">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="form-group">
-                                    <label>Descrição</label>
-                                    <textarea wire:model="descricaoProjeto" class="form-control" rows="3"></textarea>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4 form-group">
-                                        <label>Nº de Vagas *</label>
-                                        <input type="number" wire:model="numeroVagaProjeto" class="form-control">
-                                    </div>
-                                    <div class="col-md-4 form-group">
-                                        <label>Início *</label>
-                                        <input type="date" wire:model="dataInicioProjeto" class="form-control">
-                                    </div>
-                                    <div class="col-md-4 form-group">
-                                        <label>Término *</label>
-                                        <input type="date" wire:model="dataTerminoProjeto" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" wire:click="$set('modalAberto', false)" class="btn btn-secondary">Cancelar</button>
-                                <button type="submit" class="btn btn-success">Salvar Projeto</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            @endif
-        </div>
-        HTML;
+        return view('admin.menus.create', 
+        [
+            'itens'         => MenuItem::whereNull('parent_id')->orderBy('label')->get(),
+            'permissions'   => Permission::whereIn('id', [1,2,3,4,5,6,7,8,9,10,11,12,13,22])->get(),
+        ]);
     }
 }
+?>
+
+@section('breadcrumbs')
+    <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="hover:text-gray-700 hover:underline">Dashboard</a>
+    <span>/</span>
+    <a href="{{ route('admin.menus') }}" class="hover:text-gray-700 hover:underline">Menu</a>
+    <span>/</span>
+    <span>Novo</span>
+@endsection
+
+<div class="space-y-6">
+    <x-portal::flash-messages />
+
+    <!-- Formulário Principal -->
+    <form wire:submit.prevent="salvar" class="space-y-6" novalidate>
+        @include('admin.menus.partials.form')
+    </form>   
+</div>

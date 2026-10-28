@@ -12,11 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('codigoProjeto')->constrained('projetos')->onDelete('cascade');
             $table->dateTime('dataInicioEdital');
-            $table->dateTime('dataTerminoEdital');            
-            $table->unsignedBigInteger('codigoPessoaCriacao');
-            $table->unsignedBigInteger('codigoPessoaAlteracao');
+            $table->dateTime('dataTerminoEdital');
             $table->timestamps();
             $table->softDeletes();
+            $table->unsignedBigInteger('codigoUsuarioCriacao');
+            $table->unsignedBigInteger('codigoUsuarioAlteracao');
         });
     }
 
