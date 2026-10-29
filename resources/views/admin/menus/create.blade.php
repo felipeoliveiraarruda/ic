@@ -34,7 +34,7 @@ new class extends Component
             $this->menu_group_id = $firstGroup->id;
         }
         
-        $this->order = (MenuItem::max('order') ?? 0) + 1;
+        $this->order = (MenuItem::where('menu_group_id', $this->menu_group_id)->max('order') ?? 0) + 1;
     }
 
     protected function rules(): array
@@ -118,7 +118,15 @@ new class extends Component
         }
 
         return $options;
-    }        
+    }
+
+    public function updatedMenuGroupId($value): void
+    {
+        if ($value) {
+            // Busca a maior ordem do grupo selecionado e soma 1 (caso não existam itens, inicia em 1)
+            $this->order = (MenuItem::where('menu_group_id', $value)->max('order') ?? 0) + 1;
+        }
+    }
 
     public function render()
     {

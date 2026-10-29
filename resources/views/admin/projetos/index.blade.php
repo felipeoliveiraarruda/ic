@@ -69,10 +69,28 @@ new class extends Component
     
     public function render()
     {
-        $projetos = Projeto::with(['editais', 'cursos'])
-                    ->when($this->search, fn($q) => $q->where('tituloProjeto', 'like', "%{$this->search}%"))
-                    ->latest()
-                    ->paginate(10);
+        $projetos = Projeto::query()
+            ->with(['editais', 'cursos'])
+            ->when($this->search, function ($query) 
+            {
+                $searchTerm = '%' . trim($this->search) . '%';
+                $termoLower = mb_strtolower(trim($this->search), 'UTF-8');
+
+                // Consulta direta e ultrarrápida via SQL local
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('tituloProjeto', 'like', $searchTerm)
+                      ->orWhere('codigoPessoaResponsavel', 'like', $searchTerm)
+                      ->orWhere('nomePessoaResponsavel', 'like', $searchTerm);
+
+
+                    $q->orWhereHas('cursos', function ($cursoQuery) use ($searchTerm) {
+                        $cursoQuery->where('codigoCurso', 'like', $searchTerm)
+                                   ->orWhere('nomeCurso', 'like', $searchTerm);
+                    });
+                });
+            })
+            ->latest()
+            ->paginate(10);                    
 
         return view('admin.projetos.index',
         [
@@ -127,6 +145,7 @@ new class extends Component
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Projeto</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Responsável</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Externo?</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Inscrições</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
                         <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500"></th>
                     </tr>
@@ -151,10 +170,22 @@ new class extends Component
                                 {{ ($projeto->statusExternoProjeto == 'S' ? 'Sim' : 'Não') }}
                             </td>
                             <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                                <x-portal::badge variant="success">Ativo</x-portal::badge>
-                                <x-portal::badge variant="warning">Manutenção</x-portal::badge>
-                                <x-portal::badge variant="info">Atendimento</x-portal::badge>
-                                <x-portal::badge variant="secondary">Financeiro</x-portal::badge>
+                                @if($hoje < $projeto->editais->first()?->dataInicioEdital)
+                                    <x-portal::badge variant="warning">Aguardando</x-portal::badge>
+                                @elseif ($hoje >= $projeto->editais->first()?->dataInicioEdital && $hoje <= $projeto->editais->first()?->dataTerminoEdital)
+                                    <x-portal::badge variant="success">Abertas</x-portal::badge>
+                                @else
+                                    <x-portal::badge variant="danger">Encerrado</x-portal::badge>
+                                @endif
+                            </td>                            
+                            <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                @if($hoje >= $projeto->dataInicioProjeto && $hoje <= $projeto->dataTerminoProjeto)
+                                    <x-portal::badge variant="success">Ativo</x-portal::badge>
+                                @elseif($hoje >= $projeto->dataTerminoProjeto)
+                                    <x-portal::badge variant="danger">Encerrado</x-portal::badge>
+                                @else
+                                    <x-portal::badge variant="warning">Aguardando</x-portal::badge>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <x-portal::resource-actions
