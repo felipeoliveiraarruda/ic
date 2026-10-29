@@ -55,7 +55,7 @@ new class extends Component
 
                 <!-- Botões alinhados à direita -->
                 <div class="flex items-center gap-2 flex-shrink-0 sm:ms-auto">
-                    <x-portal::button :href="route('admin.projetos')" variant="secondary" icon="fa-solid fa-arrow-rotate-left">
+                    <x-portal::button :href="route('admin.projetos')" variant="secondary" icon="fa-solid fa-arrow-left">
                         Voltar
                     </x-portal::button>
                 </div>

@@ -89,7 +89,6 @@ new class extends Component
         return Carbon::today()->lt(Carbon::parse($edital->dataInicioEdital));
     }
 
-
     public function render()
     {
         return view('pages.visualizar');
@@ -141,16 +140,16 @@ new class extends Component
                         <!-- Lado Direito: Botões (forçados para a direita com 'sm:ms-auto') -->
                         <div class="flex items-center gap-2 flex-shrink-0 sm:ms-auto">
                             @if($this->inscricoesNaoIniciaram)
-                                <x-portal::button wire:click="openInterestModal" icon="fa-solid fa-heart">
+                                <x-portal::button wire:click="openInterestModal" icon="fa-solid fa-thumbtack">
                                     Tenho Interesse
                                 </x-portal::button>
                             @else
-                                <x-portal::button wire:click="openInterestModal" icon="fa-solid fa-heart">
+                                <x-portal::button wire:click="openInterestModal" icon="fa-solid fa-clipboard-check">
                                     Inscreva-se
                                 </x-portal::button>
                             @endif
 
-                            <x-portal::button :href="route('home')" variant="secondary" icon="fa-solid fa-arrow-rotate-left">
+                            <x-portal::button :href="route('home')" variant="secondary" icon="fa-solid fa-arrow-left">
                                 Voltar
                             </x-portal::button>
                         </div>
