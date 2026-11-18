@@ -89,8 +89,9 @@ new class extends Component
                     });
                 });
             })
+            ->where('codigoPessoaResponsavel', Auth::user()->codpes)->orWhere('codigoUsuarioCriacao', Auth::user()->codpes)
             ->latest()
-            ->paginate(10);                    
+            ->paginate(10);
 
         return view('admin.projetos.index',
         [

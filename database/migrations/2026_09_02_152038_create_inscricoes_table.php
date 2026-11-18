@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('cursoInscricao');
             $table->string('instituicaoInscricao');
             $table->string('historicoEscolarInscricao');
+            $table->char('statusInscricao', 1)->default('N');
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedBigInteger('codigoUsuarioCriacao');
